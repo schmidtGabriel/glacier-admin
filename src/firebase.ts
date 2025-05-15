@@ -12,6 +12,8 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIRE_BASE_APP_ID,
 };
 
+
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+export const pushUrl = import.meta.env.VITE_FIRE_BASE_PUSH_URL;

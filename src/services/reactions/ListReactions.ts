@@ -1,16 +1,8 @@
 import { collection, getDocs, query } from "@firebase/firestore";
-import firebase from "firebase/compat/app";
 import { db } from "../../firebase";
-import getUser from "../user/getUser";
+import type { Reaction } from "../../types/Reaction";
+import getUser from "../users/getUser";
 
-type Reaction = {
-  uuid: string;
-  user: firebase.firestore.DocumentData | null | undefined;
-  url: string;
-  due_date: string;
-  status: string;
-  created_at: string;
-};
 export async function listReactions(): Promise<Reaction[]> {
   const q = collection(db, "reactions");
   const querySnapshot = await getDocs(query(q));

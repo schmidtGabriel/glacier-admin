@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
-import getUser from "../../services/user/getUser";
-import { saveUser } from "../../services/user/saveUser";
-import { updateUser } from "../../services/user/updateUser";
+import getUser from "../../services/users/getUser";
+import { saveUser } from "../../services/users/saveUser";
+import { updateUser } from "../../services/users/updateUser";
 
 type UserFormData = {
   name: string;
@@ -26,7 +26,7 @@ export default function UserForm() {
 
     setLoading(true);
     getUser(uuid)
-      .then((item) => {
+      .then((item: any) => {
         if (item) {
           setSelectedUser(item);
           reset({
@@ -39,7 +39,7 @@ export default function UserForm() {
           console.error("User not found");
         }
       })
-      .catch((error) => {
+      .catch((error: any) => {
         console.error("Error fetching reaction:", error);
       })
       .finally(() => {

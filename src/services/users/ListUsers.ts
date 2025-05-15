@@ -1,13 +1,7 @@
 import { collection, getDocs, query, where } from "@firebase/firestore";
 import { db } from "../../firebase";
+import type { User } from "../../types/User";
 
-type User = {
-  uuid: string;
-  email: string | null;
-  name: string | null;
-  role: number;
-  disabled: boolean;
-};
 
 export async function listUsers(user_id?: string): Promise<User[]> {
   const q = collection(db, "users");

@@ -1,8 +1,5 @@
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
-import { onDocumentCreated } from "firebase-functions/firestore";
-import { sendNotification } from "./../../src/services/sendNotification";
-import { getUser } from "./../../src/services/user/getUser";
 
 admin.initializeApp();
 
@@ -45,36 +42,3 @@ export const sendPushNotification = functions.https.onRequest(
   }
 );
 
-export const notifyOnReaction = onDocumentCreated(
-  "reactions/{reactionId}",
-  async (event) => {
-    const snapshot = event.data;
-    if (!snapshot) {
-      console.log("❌ No snapshot data");
-      return;
-    }
-
-    const reaction = snapshot.data();
-    const toUserId = reaction.toUserId;
-
-    if (!toUserId) {
-      console.log("❌ Missing toUserId");
-      return;
-    }
-
-    const userProps = await getUser(toUserId);
-    const fcmToken = userProps.fcm_token;
-
-    if (!fcmToken) {
-      console.log(`❌ No FCM token for user: ${toUserId}`);
-      return;
-    }
-
-    return sendNotification(
-      fcmToken,
-      `${reaction.fromUserName} reagiu à sua postagem!`,
-      `Reaction: ${reaction.reaction}`,
-      reaction.reactionId
-    );
-  }
-);

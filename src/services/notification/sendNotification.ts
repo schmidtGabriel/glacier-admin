@@ -1,3 +1,5 @@
+import { pushUrl } from "../../firebase";
+
 export const sendNotification = async (
   fcmToken: string,
   title: string,
@@ -5,7 +7,7 @@ export const sendNotification = async (
   reaction: string
 ): Promise<void> => {
   try {
-    const response = await fetch(import.meta.env.VITE_PUSH_URL, {
+    const response = await fetch(pushUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

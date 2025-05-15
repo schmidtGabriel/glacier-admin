@@ -4,14 +4,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import getReaction from "../../services/reactions/getReaction";
 import { saveReaction } from "../../services/reactions/saveReaction";
 import { updateReaction } from "../../services/reactions/updateReaction";
-import { listUsers } from "../../services/user/ListUsers";
+import { listUsers } from "../../services/users/ListUsers";
 
 type ReactionFormData = {
   user: string;
   title: string;
   url: string;
   status: string;
-  video_type: string;
+  type_video:string;
   due_date: string;
 };
 
@@ -29,7 +29,6 @@ export default function ReactionForm() {
     if (!uuid) return;
 
     setLoading(true);
-    console.log("Fetching reaction with UUID:", uuid);
     getReaction(uuid)
       .then((reaction) => {
         if (reaction) {
@@ -39,10 +38,10 @@ export default function ReactionForm() {
             title: reaction.title,
             url: reaction.url,
             status: reaction.status,
+            type_video: reaction.type_video,
             due_date: reaction.due_date?.toDate
               ? reaction.due_date.toDate().toISOString().slice(0, 16)
               : new Date().toISOString().slice(0, 16),
-              video_type: reaction.video_type,
           });
         } else {
           console.error("Reaction not found");
@@ -62,7 +61,6 @@ export default function ReactionForm() {
     if (res) {
       setUsers(res);
     }
-    console.log("Fetched users:", res);
   };
 
   const onSubmit = (data: ReactionFormData) => {
@@ -83,7 +81,7 @@ export default function ReactionForm() {
   if (loading) return <p className="p-4">Loading...</p>;
 
   return (
-    <div className="max-w-md mx-auto mt-8 p-4 bg-white rounded shadow">
+    <div className="max-w-lg mx-auto mt-8 p-4 bg-white rounded shadow">
       <h1 className="text-xl font-semibold mb-4">Create Reaction</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <label className="block mb-2">
@@ -109,7 +107,7 @@ export default function ReactionForm() {
           />
         </label>
         <label className="block mb-2">
-          URL:
+          Video URL:
           <input
             {...register("url", { required: true })}
             className="w-full border border-gray-300 p-2 rounded mt-1"
@@ -119,12 +117,12 @@ export default function ReactionForm() {
          <label className="block mb-2 mt-4">
           Video Type:
           <select
-            {...register("video_type", { required: true })}
+            {...register("type_video", { required: true })}
             className="w-full border border-gray-300 p-2 rounded mt-1"
           >
             <option value="">Select type</option>
-            <option value="video">Video Link</option>
-            <option value="social">Social Video</option>
+            <option value="1">Video Link</option>
+            <option value="2">Social Video</option>
           </select>
         </label>
         <label className="block mb-2 mt-4">

@@ -4,17 +4,21 @@ import { db } from "../../firebase";
 export function updateReaction(
   data: {
     user: string;
+    title: string;
+    type_video: string;
     url: string;
     due_date: string;
     status: string;
   },
   reaction: any
 ): Promise<void | DocumentReference> {
-  const { user, url, due_date, status } = data;
+  const { user, url, title, type_video, due_date, status } = data;
 
   const payload = {
     user,
     url,
+    title,
+    type_video,
     due_date: new Date(due_date),
     status,
     created_at: new Date(),

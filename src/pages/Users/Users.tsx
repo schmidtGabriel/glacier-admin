@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { listUsers } from "../../services/user/ListUsers";
+import { listUsers } from "../../services/users/ListUsers";
 
 // type User = {
 //   uuid: string;
