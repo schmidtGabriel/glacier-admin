@@ -8,8 +8,10 @@ import { listUsers } from "../../services/user/ListUsers";
 
 type ReactionFormData = {
   user: string;
+  title: string;
   url: string;
   status: string;
+  video_type: string;
   due_date: string;
 };
 
@@ -34,11 +36,13 @@ export default function ReactionForm() {
           setSelectedReaction(reaction);
           reset({
             user: reaction.user,
+            title: reaction.title,
             url: reaction.url,
             status: reaction.status,
             due_date: reaction.due_date?.toDate
               ? reaction.due_date.toDate().toISOString().slice(0, 16)
               : new Date().toISOString().slice(0, 16),
+              video_type: reaction.video_type,
           });
         } else {
           console.error("Reaction not found");
@@ -96,6 +100,14 @@ export default function ReactionForm() {
             ))}
           </select>
         </label>
+
+           <label className="block mb-2">
+          Title:
+          <input
+            {...register("title", { required: true })}
+            className="w-full border border-gray-300 p-2 rounded mt-1"
+          />
+        </label>
         <label className="block mb-2">
           URL:
           <input
@@ -103,6 +115,17 @@ export default function ReactionForm() {
             className="w-full border border-gray-300 p-2 rounded mt-1"
             placeholder="https://example.com"
           />
+        </label>
+         <label className="block mb-2 mt-4">
+          Video Type:
+          <select
+            {...register("video_type", { required: true })}
+            className="w-full border border-gray-300 p-2 rounded mt-1"
+          >
+            <option value="">Select type</option>
+            <option value="video">Video Link</option>
+            <option value="social">Social Video</option>
+          </select>
         </label>
         <label className="block mb-2 mt-4">
           Status:
