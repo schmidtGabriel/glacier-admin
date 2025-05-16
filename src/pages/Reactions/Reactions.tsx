@@ -49,15 +49,23 @@ export default function Reactions() {
             >
               <td className="p-3">{item.url || "—"}</td>
               <td className="p-3">{item.user.name}</td>
-              <td className="p-3">{item.status == 10 ? "User" : "Admin"}</td>
+              <td className="p-3">{handleStatus(item.status)}</td>
+              <td className="p-3">{item.type_video == '1' ? "Video Link" : item.type_video === '2'? "Social Link": "Source Video"}</td>
               <td className="p-3">{item.due_date}</td>
               <td className="p-3">{item.created_at}</td>
-              <td className="p-3">
+              <td className="p-3 flex flex-row gap-2">
                 <button
                   onClick={() => navigate(`/reactions/edit?uuid=${item.uuid}`)}
                   className="text-blue-600 hover:text-blue-800"
                 >
                   Edit
+                </button>
+
+                  <button
+                  onClick={() => navigate(`/reactions/detail?uuid=${item.uuid}`)}
+                  className="text-orange-600 hover:text-orange-800"
+                >
+                  Show
                 </button>
               </td>
             </tr>
@@ -66,4 +74,19 @@ export default function Reactions() {
       </table>
     </div>
   );
+
+  function handleStatus(status: string) {
+    switch (status) {
+      case "0":
+        return "Pending";
+      case "1":  
+        return "Sent";
+      case "10":  
+        return "Approved";
+      case "-10":
+        return "Rejected";
+      default:
+        return "Unknown"; 
+    }
+  }
 }

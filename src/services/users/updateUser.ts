@@ -1,4 +1,4 @@
-import { doc, setDoc } from "@firebase/firestore";
+import { doc, updateDoc } from "@firebase/firestore";
 import { db } from "../../firebase";
 
 export async function updateUser(
@@ -7,8 +7,8 @@ export async function updateUser(
     email: string;
     phone: string;
     password: string;
+    uuid: string;
   },
-  existingUser: any
 ): Promise<void> {
   const { name, email, phone } = data;
 
@@ -22,7 +22,7 @@ export async function updateUser(
     phone,
   };
 
-  const reactionRef = doc(db, "users", existingUser.uuid);
+  const reactionRef = doc(db, "users", data.uuid);
 
-  return setDoc(reactionRef, { ...existingUser, ...payload });
+  return updateDoc(reactionRef, payload);
 }

@@ -55,7 +55,7 @@ export default function UserForm() {
     if (!uuid) {
       saveUser(data);
     } else {
-      updateUser(data, selectedUser);
+      updateUser({...data, uuid });
     }
     // TODO: send data to Firebase
     navigate("/users");

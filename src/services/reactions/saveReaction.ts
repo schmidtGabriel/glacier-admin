@@ -25,6 +25,7 @@ export async function saveReaction(data: {
     due_date: new Date(due_date),
     status,
     created_at: new Date(),
+    recorded_video: '',
   };
 
   const reactionRef = collection(db, "reactions");

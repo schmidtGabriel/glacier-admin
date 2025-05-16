@@ -4,6 +4,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import SidebarLayout from "./components/ui/Sidebar";
 import { AuthProvider } from "./context/AuthContext";
 import Login from "./pages/Login";
+import ReactionDetail from "./pages/Reactions/ReactionDetail";
 import ReactionForm from "./pages/Reactions/ReactionForm";
 import Reactions from "./pages/Reactions/Reactions";
 import UserForm from "./pages/Users/UserForm";
@@ -60,14 +61,14 @@ function App() {
                       element={
                         <Routes>
                           <Route path="" element={<Reactions />} />
-                          {/* <Route
+                          <Route
                             path="detail"
                             element={
                               <ProtectedRoute>
-                                <Reactions />
+                                <ReactionDetail />
                               </ProtectedRoute>
                             }
-                          /> */}
+                          />
                           <Route
                             path="new"
                             element={

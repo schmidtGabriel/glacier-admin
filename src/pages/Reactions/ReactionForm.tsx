@@ -68,7 +68,7 @@ export default function ReactionForm() {
     if (!uuid) {
       saveReaction(data);
     } else {
-      updateReaction(data, selectedReaction);
+      updateReaction({...data, uuid});
     }
     // TODO: send data to Firebase
     navigate("/reactions");
@@ -123,6 +123,7 @@ export default function ReactionForm() {
             <option value="">Select type</option>
             <option value="1">Video Link</option>
             <option value="2">Social Video</option>
+             <option value="3">Source Video</option>
           </select>
         </label>
         <label className="block mb-2 mt-4">

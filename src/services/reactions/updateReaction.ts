@@ -1,8 +1,9 @@
-import { doc, DocumentReference, setDoc } from "@firebase/firestore";
+import { doc, DocumentReference, updateDoc } from "@firebase/firestore";
 import { db } from "../../firebase";
 
 export function updateReaction(
   data: {
+    uuid: string;
     user: string;
     title: string;
     type_video: string;
@@ -10,7 +11,6 @@ export function updateReaction(
     due_date: string;
     status: string;
   },
-  reaction: any
 ): Promise<void | DocumentReference> {
   const { user, url, title, type_video, due_date, status } = data;
 
@@ -21,11 +21,9 @@ export function updateReaction(
     type_video,
     due_date: new Date(due_date),
     status,
-    created_at: new Date(),
-    uuid: reaction.uuid,
   };
 
-  const reactionRef = doc(db, "reactions", reaction.uuid);
+  const reactionRef = doc(db, "reactions", data.uuid);
 
-  return setDoc(reactionRef, { ...reaction, ...payload });
+  return updateDoc(reactionRef, payload);
 }
