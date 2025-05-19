@@ -1,3 +1,4 @@
+import { Download } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import getReaction from "../../services/reactions/getReaction";
@@ -37,11 +38,11 @@ export default function ReactionDetail() {
 
       <button
         onClick={() => navigate("/reactions")}
-        className="mt-4 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+        className="cursor-pointer mt-4 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
       >
         Back 
       </button>
- <div className="max-w-xl mx-auto mt-8 p-4 bg-white rounded shadow">
+ <div className="max-w-xl mx-auto mt-8 p-4 bg-white dark:bg-slate-800 rounded shadow">
       <h1 className="text-xl font-semibold mb-4">Reaction Details</h1>
       <div className="mb-2"><strong>User:</strong> {reaction.user.name}</div>
       <div className="mb-2"><strong>Title:</strong> {reaction.title}</div>
@@ -61,15 +62,17 @@ export default function ReactionDetail() {
                 <video
                   src={String(reaction.video_url)}
                   controls
-                  className="max-w-[100%] rounded"
+                  className="max-w-[100%] max-h-[500px] rounded"
                   onError={(e) => { const target = e.target as HTMLVideoElement; target.onerror = null; target.style.display = 'none'; }}
                 />
                 <a
                   href={String(reaction.video_url)}
                   download
-                  className="mt-2 inline-block text-blue-600 underline"
+                  className="mt-2 bg-blue-600 hover:bg-blue-800 text-white flex flex-row gap-2 items-center w-fit px-2 py-1 rounded"
+                  aria-label="Download Video"
                 >
-                  Download Video
+                  <div>Download</div> 
+                  <Download className="w-5 h-5" />
                 </a>
               </div>
             )}
@@ -78,15 +81,17 @@ export default function ReactionDetail() {
                 <video
                   src={String(reaction.recored_url)}
                   controls
-                  className="max-w-[100%] rounded"
+                  className="max-w-[100%] max-h-[500px] rounded"
                   onError={(e) => { const target = e.target as HTMLVideoElement; target.onerror = null; target.style.display = 'none'; }}
                 />
                 <a
                   href={String(reaction.recored_url)}
                   download
-                  className="mt-2 inline-block text-blue-600 underline"
+                  className="mt-2 bg-blue-600 hover:bg-blue-800 text-white flex flex-row gap-2 items-center w-fit px-2 py-1 rounded"
+                  aria-label="Download Video"
                 >
-                  Download Video
+                  <div>Download</div> 
+                  <Download className="w-5 h-5" />
                 </a>
               </div>
             )}

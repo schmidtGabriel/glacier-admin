@@ -10,9 +10,10 @@ export function updateReaction(
     url: string;
     due_date: string;
     status: string;
+    video_duration: number;
   },
 ): Promise<void | DocumentReference> {
-  const { user, url, title, type_video, due_date, status } = data;
+  const { user, url, title, type_video, due_date,video_duration, status } = data;
 
   const payload = {
     user,
@@ -21,6 +22,7 @@ export function updateReaction(
     type_video,
     due_date: new Date(due_date),
     status,
+    video_duration
   };
 
   const reactionRef = doc(db, "reactions", data.uuid);

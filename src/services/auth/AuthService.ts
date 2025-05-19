@@ -12,7 +12,7 @@ export const login = async (email: string, password: string) => {
     );
 
     const user = await getUser(userCredential.user.uid);
-    if (!user || user["role"] !== "Admin") {
+    if (!user || user["role"] !== 100) {
       auth.signOut();
       throw new Error("User unauthorized");
     }

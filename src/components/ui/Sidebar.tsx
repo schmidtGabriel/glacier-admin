@@ -96,6 +96,21 @@ export default function SidebarLayout({
             );
           })}
         </nav>
+        <div className="absolute bottom-0 w-full p-4 border-t border-slate-200 dark:border-gray-700">
+          <button
+            onClick={async () => {
+              const { getAuth, signOut } = await import("firebase/auth");
+              const auth = getAuth();
+              signOut(auth).catch((error) => {
+                console.error("Error signing out:", error);
+              });
+            }}
+            className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors text-red-600 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-900 w-full cursor-pointer"
+          >
+            <X size={18} />
+            {!collapsed && "Sign out"}
+          </button>
+        </div>
       </div>
 
       {/* Content area */}

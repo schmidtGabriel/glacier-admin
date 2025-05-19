@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ReactionStatusEnum, ReactionStatusLabel } from "../../enums/ReactionStatusEnum";
+import { VideoTypeLabel } from "../../enums/VideoTypeEnum";
 import { listReactions } from "../../services/reactions/ListReactions";
 
 export default function Reactions() {
@@ -35,7 +37,8 @@ export default function Reactions() {
           <tr className="text-left border-b dark:border-gray-700">
             <th className="p-3">URL</th>
             <th className="p-3">User</th>
-            <th className="p-3">status</th>
+            <th className="p-3">Status</th>
+            <th className="p-3">Type</th>
             <th className="p-3">Due_date</th>
             <th className="p-3">Created_at</th>
             <th className="p-3">Actions</th>
@@ -49,8 +52,8 @@ export default function Reactions() {
             >
               <td className="p-3">{item.url || "—"}</td>
               <td className="p-3">{item.user.name}</td>
-              <td className="p-3">{handleStatus(item.status)}</td>
-              <td className="p-3">{item.type_video == '1' ? "Video Link" : item.type_video === '2'? "Social Link": "Source Video"}</td>
+              <td className="p-3">{item.status in ReactionStatusEnum ? ReactionStatusLabel[item.status as keyof typeof ReactionStatusLabel] : 'Unknown'}</td>
+      <td className="p-3">{item.type_video in VideoTypeLabel ? VideoTypeLabel[item.type_video as keyof typeof VideoTypeLabel] : 'Unknown'}</td>
               <td className="p-3">{item.due_date}</td>
               <td className="p-3">{item.created_at}</td>
               <td className="p-3 flex flex-row gap-2">
@@ -74,19 +77,4 @@ export default function Reactions() {
       </table>
     </div>
   );
-
-  function handleStatus(status: string) {
-    switch (status) {
-      case "0":
-        return "Pending";
-      case "1":  
-        return "Sent";
-      case "10":  
-        return "Approved";
-      case "-10":
-        return "Rejected";
-      default:
-        return "Unknown"; 
-    }
-  }
 }

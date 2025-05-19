@@ -20,16 +20,26 @@ async function getReaction(ref: string) {
     'user': user,
     'created_at': data.created_at?.toDate().toISOString(),
     'due_date': data.due_date?.toDate().toISOString(),
+    'url': data.url,
+    'video_recorded': data.recorded_video,
+    'type_video': data.type_video,
+    'status': data.status,
     'recored_url': await getRecordedVideoUrl(data.recorded_video),
     'video_url': await getVideoUrl(data.url),
+    'video_duration': data.video_duration,
   }
 }
 
 async function getRecordedVideoUrl(videoUrl: string): Promise<string> {
   if (!videoUrl) return "";
   const fileRef = ref(storage, videoUrl);
-  const url = await getDownloadURL(fileRef);
-  return url;
+  try {
+    const url = await getDownloadURL(fileRef);
+    return url;
+  } catch (error) {
+    console.error("Error getting video URL:", error);
+    return "";
+  }
 }
 
 async function getVideoUrl(videoUrl: string) {

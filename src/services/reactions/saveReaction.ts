@@ -15,8 +15,9 @@ export async function saveReaction(data: {
   type_video: string;
   due_date: string;
   status: string;
+  video_duration: number;
 }): Promise<void | DocumentReference> {
-  const { user, url, title, type_video, due_date, status } = data;
+  const { user, url, title, type_video, video_duration, due_date, status } = data;
   const reaction = {
     user,
     title,
@@ -26,6 +27,7 @@ export async function saveReaction(data: {
     status,
     created_at: new Date(),
     recorded_video: '',
+    video_duration,
   };
 
   const reactionRef = collection(db, "reactions");

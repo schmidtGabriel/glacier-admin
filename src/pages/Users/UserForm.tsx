@@ -19,7 +19,7 @@ export default function UserForm() {
   const searchParams = new URLSearchParams(location.search);
   const uuid = searchParams.get("uuid");
   const [loading, setLoading] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [ setSelectedUser] = useState<any>(null);
 
   const fetchReaction = async (uuid?: string) => {
     if (!uuid) return;
@@ -64,7 +64,7 @@ export default function UserForm() {
 
   return (
     <div className="max-w-md mx-auto mt-8 p-4 bg-white rounded shadow">
-      <h1 className="text-xl font-semibold mb-4">User Form</h1>
+      <h1 className="text-xl font-semibold mb-4">{uuid?'Edit User': 'Create User'}</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <label className="block mb-2">
           Name:
