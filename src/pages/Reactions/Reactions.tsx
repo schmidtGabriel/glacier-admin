@@ -35,7 +35,8 @@ export default function Reactions() {
       <table className="min-w-full bg-white dark:bg-gray-800 rounded shadow">
         <thead>
           <tr className="text-left border-b dark:border-gray-700">
-            <th className="p-3">URL</th>
+             <th className="p-3">Title</th>
+            <th className="p-3">Video Path</th>
             <th className="p-3">User</th>
             <th className="p-3">Status</th>
             <th className="p-3">Type</th>
@@ -50,6 +51,7 @@ export default function Reactions() {
               key={item.uuid}
               className="border-b hover:bg-gray-100 dark:hover:bg-gray-700 dark:border-gray-700"
             >
+                <td className="p-3">{item.title || "—"}</td>
               <td className="p-3">{item.url || "—"}</td>
               <td className="p-3">{item.user.name}</td>
               <td className="p-3">{item.status in ReactionStatusEnum ? ReactionStatusLabel[item.status as keyof typeof ReactionStatusLabel] : 'Unknown'}</td>
