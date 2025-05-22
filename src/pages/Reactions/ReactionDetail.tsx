@@ -95,6 +95,26 @@ export default function ReactionDetail() {
                 </a>
               </div>
             )}
+
+              {reaction.selfie_url && (
+              <div className="flex-1">
+                <video
+                  src={String(reaction.selfie_url)}
+                  controls
+                  className="max-w-[100%] max-h-[500px] rounded"
+                  onError={(e) => { const target = e.target as HTMLVideoElement; target.onerror = null; target.style.display = 'none'; }}
+                />
+                <a
+                  href={String(reaction.selfie_url)}
+                  download
+                  className="mt-2 bg-blue-600 hover:bg-blue-800 text-white flex flex-row gap-2 items-center w-fit px-2 py-1 rounded"
+                  aria-label="Download Video"
+                >
+                  <div>Download</div> 
+                  <Download className="w-5 h-5" />
+                </a>
+              </div>
+            )}
           </div>
         </div>
       )}

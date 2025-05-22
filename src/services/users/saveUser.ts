@@ -7,15 +7,16 @@ export function saveUser(data: {
   email: string;
   phone: string;
   password: string;
+  role: number;
 }): Promise<void> {
-  const { name, email, password, phone } = data;
+  const { name, email, password, phone, role } = data;
 
   const user = {
     name,
     email,
     created_at: new Date(),
     phone,
-    role: 10,
+    role,
   };
 
   return createUserWithEmailAndPassword(getAuth(), email, password)

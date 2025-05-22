@@ -8,18 +8,21 @@ export async function updateUser(
     phone: string;
     password: string;
     uuid: string;
+    role: number;
   },
 ): Promise<void> {
-  const { name, email, phone } = data;
+  const { name, email, phone, role } = data;
 
   const payload: {
     name: string;
     email: string;
     phone: string;
+    role: number;
   } = {
     name,
     email,
     phone,
+    role
   };
 
   const reactionRef = doc(db, "users", data.uuid);

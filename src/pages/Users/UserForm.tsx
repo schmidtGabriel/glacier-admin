@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
+import { UserRoleEnum } from "../../enums/UserRoleEnum";
+import enumToArray from "../../helpers/EnumsToArray";
 import getUser from "../../services/users/getUser";
 import { saveUser } from "../../services/users/saveUser";
 import { updateUser } from "../../services/users/updateUser";
@@ -10,6 +12,7 @@ type UserFormData = {
   email: string;
   phone: string;
   password: string;
+  role: number;
 };
 
 export default function UserForm() {
@@ -19,7 +22,6 @@ export default function UserForm() {
   const searchParams = new URLSearchParams(location.search);
   const uuid = searchParams.get("uuid");
   const [loading, setLoading] = useState(false);
-  const [ setSelectedUser] = useState<any>(null);
 
   const fetchReaction = async (uuid?: string) => {
     if (!uuid) return;
@@ -28,13 +30,15 @@ export default function UserForm() {
     getUser(uuid)
       .then((item: any) => {
         if (item) {
-          setSelectedUser(item);
           reset({
             name: item.name,
             email: item.email,
             password: "",
             phone: item.phone,
+            role: item.role,
           });
+
+          console.log(item);
         } else {
           console.error("User not found");
         }
@@ -102,6 +106,24 @@ export default function UserForm() {
             placeholder="Enter a password"
           />
         </label>
+
+
+        <label className="block mb-2 mt-4">
+          Role:
+          <select
+            {...register("role", { required: true })}
+            className="w-full border border-gray-300 p-2 rounded mt-1"
+          >
+            <option value="">Select a user</option>
+            {enumToArray(UserRoleEnum).map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.name}
+              </option>
+            ))}
+          </select>
+        </label>
+
+         
         <button
           type="submit"
           className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"

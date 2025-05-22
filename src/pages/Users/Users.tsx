@@ -16,6 +16,7 @@ export default function Users() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log("Fetching users...");
     async function fetchUsers() {
       setLoading(true);
       const usersData = await listUsers();
@@ -35,7 +36,7 @@ export default function Users() {
           onClick={() => navigate("/users/new")}
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
         >
-          Add Reaction
+          Add User
         </button>
       </div>
       <table className="min-w-full bg-white dark:bg-gray-800 rounded shadow">
