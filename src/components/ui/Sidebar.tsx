@@ -11,7 +11,11 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
+import type { UserResource } from "../../resources/UserResource";
+import { clearSession, selectSessionUser } from "../../store/reducers/session";
+import { useAppSelector } from "../../store/store";
 
 const navItems = [
   { name: "Dashboard", path: "/", icon: <LayoutDashboard size={18} /> },
@@ -27,9 +31,10 @@ export default function SidebarLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const user = { name: "Gabriel Schmidt", avatar: "https://i.pravatar.cc/40" };
+  const [user, setUser] = useState<UserResource>();
   const location = useLocation();
-
+  const disptach = useDispatch();
+  const u = useAppSelector(selectSessionUser);
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add("dark");
@@ -37,6 +42,16 @@ export default function SidebarLayout({
       document.documentElement.classList.remove("dark");
     }
   }, [darkMode]);
+
+  useEffect(() => {
+    if (u) {
+      try {
+        setUser(u);
+      } catch (error) {
+        console.error("Error parsing user from localStorage:", error);
+      }
+    }
+  }, []);
 
   return (
     <div className="flex h-screen bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-white">
@@ -96,14 +111,17 @@ export default function SidebarLayout({
             );
           })}
         </nav>
+
         <div className="absolute bottom-0 w-full p-4 border-t border-slate-200 dark:border-gray-700">
           <button
             onClick={async () => {
               const { getAuth, signOut } = await import("firebase/auth");
               const auth = getAuth();
-              signOut(auth).catch((error) => {
-                console.error("Error signing out:", error);
-              });
+              signOut(auth)
+                .then(() => disptach(clearSession()))
+                .catch((error) => {
+                  console.error("Error signing out:", error);
+                });
             }}
             className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors text-red-600 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-900 w-full cursor-pointer"
           >
@@ -138,11 +156,11 @@ export default function SidebarLayout({
             </button>
             <div className="flex flex-row items-center gap-2">
               <img
-                src={user.avatar}
+                src={user?.avatar ?? "https://via.placeholder.com/150"}
                 alt="User"
                 className="w-8 h-8 rounded-full"
               />
-              <span className="text-sm font-medium">{user.name}</span>
+              <span className="text-sm font-medium">{user?.name}</span>
             </div>
           </div>
         </div>

@@ -2,22 +2,43 @@ import {
   addDoc,
   collection,
   DocumentReference,
-  setDoc,
+  updateDoc,
 } from "@firebase/firestore";
 import { db } from "../../firebase";
 import { sendNotification } from "../notification/sendNotification";
 import getUser from "../users/getUser";
 
-export async function saveReaction(data: {
-  user: string;
-  title: string;
-  url: string;
-  type_video: string;
-  due_date: string;
-  status: string;
-  video_duration: number;
+export async function saveReaction({
+  logUser,
+  data,
+}: {
+  logUser: any;
+  data: {
+    user: string;
+    title: string;
+    url: string;
+    type_video: string;
+    due_date: string;
+    status: string;
+    video_duration: number;
+    organization?: string;
+  };
 }): Promise<void | DocumentReference> {
-  const { user, url, title, type_video, video_duration, due_date, status } = data;
+  const org = logUser?.organization;
+
+  const {
+    user,
+    url,
+    title,
+    type_video,
+    video_duration,
+    due_date,
+    status,
+    organization,
+  } = data;
+
+  const userOrg = organization || org?.uuid;
+
   const reaction = {
     user,
     title,
@@ -26,8 +47,9 @@ export async function saveReaction(data: {
     due_date: new Date(due_date),
     status,
     created_at: new Date(),
-    recorded_video: '',
+    recorded_video: "",
     video_duration,
+    organization: userOrg ? userOrg : null,
   };
 
   const reactionRef = collection(db, "reactions");
@@ -36,16 +58,14 @@ export async function saveReaction(data: {
 
   const userProp = await getUser(user);
 
+  sendNotification(
+    userProp?.fcm_token ?? "",
+    `Hey ${userProp?.name}, we need your reaction!`,
+    `Reaction: ${reaction.title}`,
+    docRef.id
+  );
 
-   sendNotification(
-       userProp.fcm_token,
-      `Hey ${userProp.name} reagiu à sua postagem!`,
-      `Reaction: ${reaction.title}`,
-      docRef.id
-    );
-
-  return setDoc(docRef, {
+  return updateDoc(docRef, {
     uuid: docRef.id,
-    ...reaction,
   });
 }

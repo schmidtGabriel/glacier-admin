@@ -6,8 +6,7 @@ import { storage } from '../firebase';
 function UploadVideo({folder, onUploadComplete}: {folder: string, onUploadComplete: (fileName: string, fileUrl: string, fileDuration: number) => void}) {
   const [videoUrl, setVideoUrl] = useState('');
   const [progress, setProgress] = useState(0);
-  const [duration, setDuration] = useState<number | null>(null);
-  const [videoName, setVideoName] = useState<string>('');
+  
 
   const handleUpload = (e: any) => {
     const file = e.target.files[0];
@@ -30,7 +29,6 @@ function UploadVideo({folder, onUploadComplete}: {folder: string, onUploadComple
       },
       () => {
 		const name = uploadTask.snapshot.metadata.fullPath
-		setVideoName(uploadTask.snapshot.metadata.fullPath);
 
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           setVideoUrl(downloadURL);
@@ -41,7 +39,6 @@ function UploadVideo({folder, onUploadComplete}: {folder: string, onUploadComple
 					
 
 		URL.revokeObjectURL(downloadURL); // Clean up
-		setDuration(video.duration);
 
 		onUploadComplete(name, downloadURL, video.duration);
 		};

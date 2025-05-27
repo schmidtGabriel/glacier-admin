@@ -24,7 +24,7 @@ async function getReaction(ref: string) {
     'video_recorded': data.recorded_video,
     'type_video': data.type_video,
     'status': data.status,
-    'recored_url': await getRecordedVideoUrl(data.recorded_video),
+    'recorded_url': await getRecordedVideoUrl(data.recorded_video),
     'video_url': await getVideoUrl(data.url),
     'video_duration': data.video_duration,
     'selfie_video': data.selfie_video,

@@ -3,9 +3,12 @@ import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import { UserRoleEnum } from "../../enums/UserRoleEnum";
 import enumToArray from "../../helpers/EnumsToArray";
+import { listOrganizations } from "../../services/organizations/listOrganizations";
 import getUser from "../../services/users/getUser";
 import { saveUser } from "../../services/users/saveUser";
 import { updateUser } from "../../services/users/updateUser";
+import { selectSessionUser } from "../../store/reducers/session";
+import { useAppSelector } from "../../store/store";
 
 type UserFormData = {
   name: string;
@@ -13,15 +16,18 @@ type UserFormData = {
   phone: string;
   password: string;
   role: number;
+  organization?: string;
 };
 
 export default function UserForm() {
   const { register, handleSubmit, reset } = useForm<UserFormData>();
+  const logUser = useAppSelector(selectSessionUser);
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const uuid = searchParams.get("uuid");
   const [loading, setLoading] = useState(false);
+  const [organizations, setOrganizations] = useState<any[]>([]);
 
   const fetchReaction = async (uuid?: string) => {
     if (!uuid) return;
@@ -51,15 +57,23 @@ export default function UserForm() {
       });
   };
 
+  const getOrganizations = async () => {
+    const res = await listOrganizations();
+
+    if (res) {
+      setOrganizations(res);
+    }
+  };
+
   useEffect(() => {
-    fetchReaction(uuid ?? undefined);
+    Promise.all([getOrganizations(), fetchReaction(uuid ?? undefined)]);
   }, [uuid]);
 
   const onSubmit = (data: UserFormData) => {
     if (!uuid) {
-      saveUser(data);
+      saveUser({ logUser, data });
     } else {
-      updateUser({...data, uuid });
+      updateUser({ ...data, uuid });
     }
     // TODO: send data to Firebase
     navigate("/users");
@@ -68,7 +82,9 @@ export default function UserForm() {
 
   return (
     <div className="max-w-md mx-auto mt-8 p-4 bg-white rounded shadow">
-      <h1 className="text-xl font-semibold mb-4">{uuid?'Edit User': 'Create User'}</h1>
+      <h1 className="text-xl font-semibold mb-4">
+        {uuid ? "Edit User" : "Create User"}
+      </h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <label className="block mb-2">
           Name:
@@ -107,7 +123,6 @@ export default function UserForm() {
           />
         </label>
 
-
         <label className="block mb-2 mt-4">
           Role:
           <select
@@ -123,7 +138,23 @@ export default function UserForm() {
           </select>
         </label>
 
-         
+        {logUser && logUser.role === UserRoleEnum.Admin && (
+          <label className="block mb-2">
+            Organization:
+            <select
+              {...register("organization", { required: true })}
+              className="w-full border border-gray-300 p-2 rounded mt-1"
+            >
+              <option value="">Select a organization</option>
+              {organizations.map((org) => (
+                <option key={org.uuid} value={org.uuid}>
+                  {org.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
+
         <button
           type="submit"
           className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"

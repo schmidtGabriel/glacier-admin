@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../services/auth/AuthService";
+import { setSessionUser } from "../../store/reducers/session";
+import { useAppDispatch } from "../../store/store";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
 
@@ -19,14 +21,18 @@ const LoginForm: React.FC = () => {
   const [authError, setAuthError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const onSubmit = async (data: LoginFormInputs) => {
     setAuthError(null);
     setLoading(true);
     try {
-      await login(data.email, data.password);
-      // redirecionar ou mostrar mensagem de sucesso
-      navigate("/");
+      const user = await login(data.email, data.password);
+      if (user) {
+        dispatch(setSessionUser(user));
+        // redirecionar ou mostrar mensagem de sucesso
+        navigate("/");
+      }
     } catch (err: Error | unknown) {
       setAuthError(
         err instanceof Error ? err.message : "An unknown error occurred"
@@ -83,7 +89,7 @@ const LoginForm: React.FC = () => {
       <p className="mt-8 text-center text-sm text-gray-600">
         Don't have an account?{" "}
         <a
-          href="#"
+          href="/signup"
           className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
         >
           Sign up

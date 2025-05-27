@@ -1,15 +1,27 @@
-import { collection, doc, setDoc } from "@firebase/firestore";
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import { addDoc, collection, updateDoc } from "@firebase/firestore";
 import { db } from "../../firebase";
+import addUserOrganization from "../organizations/addUserOrganization";
 
-export function saveUser(data: {
-  name: string;
-  email: string;
-  phone: string;
-  password: string;
-  role: number;
+export async function saveUser({
+  logUser,
+  data,
+}: {
+  logUser: any;
+  data: {
+    name: string;
+    email: string;
+    phone: string;
+    password: string;
+    role: number;
+    organization?: string;
+  };
 }): Promise<void> {
-  const { name, email, password, phone, role } = data;
+  const org = logUser?.organization;
+  const { name, email, phone, role, organization } = data;
+
+  const userOrg = organization || org?.uuid;
+
+  if (!userOrg) return;
 
   const user = {
     name,
@@ -19,19 +31,12 @@ export function saveUser(data: {
     role,
   };
 
-  return createUserWithEmailAndPassword(getAuth(), email, password)
-    .then((userCredential) => {
-      // Signed in
-      const fbUser = userCredential.user;
-      const reactionRef = collection(db, "users");
+  const ref = collection(db, "users");
+  const docRef = await addDoc(ref, user);
 
-      return setDoc(doc(reactionRef, fbUser.uid), {
-        ...user,
-        uuid: fbUser.uid,
-      });
-      // You can also save additional user data in Firestore if needed
-    })
-    .catch((error) => {
-      return Promise.reject(error);
-    });
+  await addUserOrganization({ organization: userOrg, user: docRef.id });
+
+  return updateDoc(docRef, {
+    uuid: docRef.id,
+  });
 }

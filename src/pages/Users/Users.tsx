@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { listUsers } from "../../services/users/ListUsers";
+import { listUsers } from "../../services/users/listUsers";
+import { selectSessionUser } from "../../store/reducers/session";
+import { useAppSelector } from "../../store/store";
 
 // type User = {
 //   uuid: string;
@@ -11,15 +13,15 @@ import { listUsers } from "../../services/users/ListUsers";
 // };
 
 export default function Users() {
+  const loggedUser = useAppSelector(selectSessionUser);
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("Fetching users...");
     async function fetchUsers() {
       setLoading(true);
-      const usersData = await listUsers();
+      const usersData = await listUsers(loggedUser);
       setUsers(usersData);
       setLoading(false);
     }
@@ -49,6 +51,13 @@ export default function Users() {
           </tr>
         </thead>
         <tbody>
+          {users.length === 0 && (
+            <tr>
+              <td colSpan={4} className="p-3 text-center">
+                No users found
+              </td>
+            </tr>
+          )}
           {users.map((item) => (
             <tr
               key={item.uuid}
