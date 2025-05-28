@@ -72,22 +72,6 @@ export const signup = async (data: {
         const fbUser = userCredential.user;
         const userRef = collection(db, "users");
 
-        const org = await createOrganization({
-          name: data.organization,
-          admin: fbUser.uid,
-        });
-
-        if (!org) {
-          throw new Error("Failed to create organization");
-        }
-
-        for (const member of data.members) {
-          await addUserOrganization({
-            user: member,
-            organization: org.uuid,
-          });
-        }
-
         const querySnapshot = await getDocs(
           query(userRef, where("email", "==", data.email))
         );
@@ -104,6 +88,27 @@ export const signup = async (data: {
             const userData = await getUser(fbUser.uid);
             if (!userData) {
               throw new Error("User not found");
+            }
+
+            // If the user is an OrgAdmin, create an organization and add members
+            if (userData.role === UserRoleEnum.OrgAdmin) {
+              const org = await createOrganization({
+                name: data.organization,
+                admin: fbUser.uid,
+              });
+
+              if (!org) {
+                throw new Error("Failed to create organization");
+              }
+
+              for (const member of data.members) {
+                await addUserOrganization({
+                  user: member,
+                  organization: org.uuid,
+                });
+              }
+
+              userData.organization = org;
             }
 
             return userData;

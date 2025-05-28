@@ -77,7 +77,7 @@ const Signup: React.FC = () => {
       )}
       {loading ? (
         <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="p-3 bg-blue-50 border border-blue-200 text-blue-700 rounded-lg text-sm animate-fadeIn">
+          <div className="flex flex-row gap-2 p-3 bg-blue-50 border border-blue-200 text-blue-700 rounded-lg text-sm animate-fadeIn">
             <Loading />
             Loading...
           </div>

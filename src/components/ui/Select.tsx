@@ -83,16 +83,18 @@ export const Select = <T extends { id: string; name: string }>({
         <ChevronDown size={15} />
       </div>
       {isOpen && (
-        <div className="absolute z-10 w-full mt-1 border  border-gray-300 rounded bg-white shadow max-h-60 overflow-auto p-2">
+        <div className="absolute z-10 w-full mt-1 rounded bg-white shadow max-h-60 overflow-auto ">
           {searchable && (
-            <input
-              type="text"
-              className="w-full border-b p-2 "
-              placeholder={`Search ${placeholder.toLowerCase()}`}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              autoFocus
-            />
+            <div className="border-b border-gray-200 p-2">
+              <input
+                type="text"
+                className="w-full  p-2 "
+                placeholder={`Search ${placeholder.toLowerCase()}`}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                autoFocus
+              />
+            </div>
           )}
 
           <div>

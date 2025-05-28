@@ -89,12 +89,11 @@ export default function ReactionForm() {
     }
   };
 
-  const onSubmit = (data: ReactionFormData) => {
-    console.log("Submitted data:", data);
+  const onSubmit = async (data: ReactionFormData) => {
     if (!uuid) {
-      saveReaction({ logUser, data });
+      await saveReaction({ logUser, data });
     } else {
-      updateReaction({ ...data, uuid });
+      await updateReaction({ ...data, uuid });
     }
     // TODO: send data to Firebase
     navigate("/reactions");

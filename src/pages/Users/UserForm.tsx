@@ -72,11 +72,11 @@ export default function UserForm() {
     Promise.all([getOrganizations(), fetchReaction(uuid ?? undefined)]);
   }, [uuid]);
 
-  const onSubmit = (data: UserFormData) => {
+  const onSubmit = async (data: UserFormData) => {
     if (!uuid) {
-      saveUser({ logUser, data });
+      await saveUser({ logUser, data });
     } else {
-      updateUser({ ...data, uuid });
+      await updateUser({ ...data, uuid });
     }
     // TODO: send data to Firebase
     navigate("/users");

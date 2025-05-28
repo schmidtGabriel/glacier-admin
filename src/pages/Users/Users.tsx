@@ -1,5 +1,7 @@
+import { Pencil } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserRoleEnum } from "../../enums/UserRoleEnum";
 import { listUsers } from "../../services/users/listUsers";
 import { selectSessionUser } from "../../store/reducers/session";
 import { useAppSelector } from "../../store/store";
@@ -12,7 +14,6 @@ export default function Users() {
   const fetchUsers = async () => {
     setLoading(true);
     const usersData = await listUsers(loggedUser);
-    console.log("Fetched users:", usersData);
     setUsers(() => usersData);
     setLoading(false);
   };
@@ -33,13 +34,24 @@ export default function Users() {
           Add User
         </button>
       </div>
-      <table className="min-w-full bg-white dark:bg-gray-800 rounded shadow">
+      <table className="table-auto w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded shadow">
         <thead>
-          <tr className="text-left border-b dark:border-gray-700">
-            <th className="p-3">Name</th>
-            <th className="p-3">Email</th>
-            <th className="p-3">Role</th>
-            <th className="p-3">Actions</th>
+          <tr className="bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 uppercase text-sm leading-normal">
+            <th className="p-4 border-b border-gray-200 dark:border-gray-700 text-left">
+              Name
+            </th>
+            <th className="p-4 border-b border-gray-200 dark:border-gray-700 text-left">
+              Email
+            </th>
+            <th className="p-4 border-b border-gray-200 dark:border-gray-700 text-left">
+              Role
+            </th>
+            <th className="p-4 border-b border-gray-200 dark:border-gray-700 text-left">
+              Created at
+            </th>
+            <th className="p-4 border-b border-gray-200 dark:border-gray-700 text-left">
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -53,17 +65,19 @@ export default function Users() {
           {users.map((item) => (
             <tr
               key={item.uuid}
-              className="border-b hover:bg-gray-100 dark:hover:bg-gray-700 dark:border-gray-700"
+              className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
             >
-              <td className="p-3">{item.name || "—"}</td>
-              <td className="p-3">{item.email}</td>
-              <td className="p-3">{item.role == 10 ? "User" : "Admin"}</td>
-              <td className="p-3">
+              <td className="p-4">{item.name || "—"}</td>
+              <td className="p-4">{item.email}</td>
+              <td className="p-4">{UserRoleEnum[item.role]}</td>
+              <td className="p-4">{item.created_at}</td>
+
+              <td className="p-4 flex-1">
                 <button
                   onClick={() => navigate(`/users/edit?uuid=${item.uuid}`)}
-                  className="text-blue-600 hover:text-blue-800"
+                  className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-200/20 rounded"
                 >
-                  Edit
+                  <Pencil size={18} />
                 </button>
               </td>
             </tr>

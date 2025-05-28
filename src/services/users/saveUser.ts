@@ -44,7 +44,7 @@ export async function saveUser({
 
   await addUserOrganization({ organization: userOrg, user: docRef.id });
 
-  return updateDoc(docRef, {
+  return await updateDoc(docRef, {
     uuid: docRef.id,
   });
 }
