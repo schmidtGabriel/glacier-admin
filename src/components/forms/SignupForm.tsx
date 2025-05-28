@@ -27,7 +27,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onNext, defaultValues }) => {
     <div className="w-full max-w-md">
       <h1 className="text-2xl font-bold mb-4">Complete Your Infos</h1>
 
-      <form onSubmit={handleSubmit(onNext)} className="space-y-6">
+      <form className="space-y-6">
         <Input
           label="Name"
           type="name"
@@ -80,7 +80,12 @@ const SignupForm: React.FC<SignupFormProps> = ({ onNext, defaultValues }) => {
           })}
         />
 
-        <Button type="submit" fullWidth className="mt-8">
+        <Button
+          type="button"
+          onClick={handleSubmit(onNext)}
+          fullWidth
+          className="mt-8"
+        >
           Next
         </Button>
       </form>

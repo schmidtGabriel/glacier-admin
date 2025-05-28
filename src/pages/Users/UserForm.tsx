@@ -20,7 +20,12 @@ type UserFormData = {
 };
 
 export default function UserForm() {
-  const { register, handleSubmit, reset } = useForm<UserFormData>();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<UserFormData>();
   const logUser = useAppSelector(selectSessionUser);
   const navigate = useNavigate();
   const location = useLocation();
@@ -43,8 +48,6 @@ export default function UserForm() {
             phone: item.phone,
             role: item.role,
           });
-
-          console.log(item);
         } else {
           console.error("User not found");
         }
@@ -89,60 +92,99 @@ export default function UserForm() {
         <label className="block mb-2">
           Name:
           <input
-            {...register("name", { required: true })}
+            {...register("name", { required: "Name is required" })}
             className="w-full border border-gray-300 p-2 rounded mt-1"
             placeholder="Enter name"
           />
+          {errors.name && (
+            <p className="mt-1 text-sm text-red-600 animate-fadeIn">
+              {errors.name.message}
+            </p>
+          )}
         </label>
 
         <label className="block mb-2">
           Phone:
           <input
-            {...register("phone", { required: true })}
+            {...register("phone", { required: "Phone is required" })}
             className="w-full border border-gray-300 p-2 rounded mt-1"
             placeholder="Enter phone"
           />
+          {errors.phone && (
+            <p className="mt-1 text-sm text-red-600 animate-fadeIn">
+              {errors.phone.message}
+            </p>
+          )}
         </label>
         <label className="block mb-2 mt-4">
           Email:
           <input
             type="email"
-            {...register("email", { required: true })}
+            {...register("email", { required: "Email is required" })}
             className="w-full border border-gray-300 p-2 rounded mt-1"
             placeholder="Enter email"
           />
+          {errors.email && (
+            <p className="mt-1 text-sm text-red-600 animate-fadeIn">
+              {errors.email.message}
+            </p>
+          )}
         </label>
 
         <label className="block mb-2 mt-4">
           Password:
           <input
             type="password"
-            {...register("password")}
+            {...register("password", {
+              required: uuid ? false : "Password is required",
+            })}
             className="w-full border border-gray-300 p-2 rounded mt-1"
             placeholder="Enter a password"
           />
+          {errors.password && (
+            <p className="mt-1 text-sm text-red-600 animate-fadeIn">
+              {errors.password.message}
+            </p>
+          )}
         </label>
 
-        <label className="block mb-2 mt-4">
-          Role:
-          <select
-            {...register("role", { required: true })}
-            className="w-full border border-gray-300 p-2 rounded mt-1"
-          >
-            <option value="">Select a user</option>
-            {enumToArray(UserRoleEnum).map((user) => (
-              <option key={user.id} value={user.id}>
-                {user.name}
-              </option>
-            ))}
-          </select>
-        </label>
+        {logUser && logUser.role === UserRoleEnum.Admin && (
+          <label className="block mb-2 mt-4">
+            Role:
+            <select
+              {...register("role", {
+                required:
+                  logUser.role === UserRoleEnum.Admin
+                    ? "Role is required"
+                    : false,
+              })}
+              className="w-full border border-gray-300 p-2 rounded mt-1"
+            >
+              <option value="">Select a user</option>
+              {enumToArray(UserRoleEnum).map((user) => (
+                <option key={user.id} value={user.id}>
+                  {user.name}
+                </option>
+              ))}
+            </select>
+            {errors.role && (
+              <p className="mt-1 text-sm text-red-600 animate-fadeIn">
+                {errors.role.message}
+              </p>
+            )}
+          </label>
+        )}
 
         {logUser && logUser.role === UserRoleEnum.Admin && (
           <label className="block mb-2">
             Organization:
             <select
-              {...register("organization", { required: true })}
+              {...register("organization", {
+                required:
+                  logUser.role === UserRoleEnum.Admin
+                    ? "Organization is required"
+                    : false,
+              })}
               className="w-full border border-gray-300 p-2 rounded mt-1"
             >
               <option value="">Select a organization</option>
@@ -152,6 +194,11 @@ export default function UserForm() {
                 </option>
               ))}
             </select>
+            {errors.organization && (
+              <p className="mt-1 text-sm text-red-600 animate-fadeIn">
+                {errors.organization.message}
+              </p>
+            )}
           </label>
         )}
 

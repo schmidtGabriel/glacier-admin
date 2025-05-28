@@ -18,6 +18,7 @@ export default function Reactions() {
     async function fetchReactions() {
       setLoading(true);
       const data = await listReactions(logUser);
+      console.log("Fetched reactions:", data);
       setReactions(data);
       setLoading(false);
     }

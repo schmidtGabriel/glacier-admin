@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import UploadVideo from "../../components/UploadFile";
@@ -25,8 +25,14 @@ type ReactionFormData = {
 };
 
 export default function ReactionForm() {
-  const { register, handleSubmit, reset, setValue, watch } =
-    useForm<ReactionFormData>();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<ReactionFormData>();
   const logUser = useAppSelector(selectSessionUser);
   const navigate = useNavigate();
   const location = useLocation();
@@ -102,10 +108,14 @@ export default function ReactionForm() {
     ]);
   }, [uuid]);
 
+  useMemo(() => {
+    console.log("Form errors:", errors);
+  }, [errors]);
+
   if (loading) return <p className="p-4">Loading...</p>;
 
   return (
-    <div className="max-w-lg mx-auto mt-8 p-4 bg-white rounded shadow">
+    <div className="max-w-2xl mx-auto mt-8 p-4 bg-white rounded shadow">
       <h1 className="text-xl font-semibold mb-4">
         {uuid ? "Edit Reaction" : "Create Reaction"}
       </h1>
@@ -113,7 +123,7 @@ export default function ReactionForm() {
         <label className="block mb-2">
           User:
           <select
-            {...register("user", { required: true })}
+            {...register("user", { required: "User is required" })}
             className="w-full border border-gray-300 p-2 rounded mt-1"
           >
             <option value="">Select a user</option>
@@ -123,19 +133,30 @@ export default function ReactionForm() {
               </option>
             ))}
           </select>
+          {errors.user && (
+            <p className="mt-1 text-sm text-red-600 animate-fadeIn">
+              {errors.user.message}
+            </p>
+          )}
         </label>
 
         <label className="block mb-2">
           Title:
           <input
-            {...register("title", { required: true })}
+            {...register("title", { required: "Title is required" })}
             className="w-full border border-gray-300 p-2 rounded mt-1"
           />
+          {errors.title && (
+            <p className="mt-1 text-sm text-red-600 animate-fadeIn">
+              {errors.title.message}
+            </p>
+          )}
         </label>
+
         <label className="block mb-2 mt-4">
           Video Type:
           <select
-            {...register("type_video", { required: true })}
+            {...register("type_video", { required: "Video type is required" })}
             className="w-full border border-gray-300 p-2 rounded mt-1"
           >
             <option value="">Select type</option>
@@ -145,6 +166,11 @@ export default function ReactionForm() {
               </option>
             ))}
           </select>
+          {errors.type_video && (
+            <p className="mt-1 text-sm text-red-600 animate-fadeIn">
+              {errors.type_video.message}
+            </p>
+          )}
         </label>
         {watch("type_video") === VideoTypeEnum.SourceVideo.toString() && (
           <label className="block mb-2 mt-4">
@@ -156,13 +182,6 @@ export default function ReactionForm() {
                 fileUrl: string,
                 fileDuration: number
               ) => {
-                console.log(
-                  "File uploaded:",
-                  fileName,
-                  fileUrl,
-                  "Duration:",
-                  fileDuration
-                );
                 setValue("url", fileName);
                 setValue("video_duration", fileDuration);
                 setVideoPreview(fileUrl); // Set the video preview URL
@@ -173,31 +192,48 @@ export default function ReactionForm() {
         )}
 
         <div className="flex flex-row gap-4 mt-4">
-          <label className="block">
+          <label className="block flex-1">
             Video URL:
             <input
-              {...register("url", { required: true })}
+              {...register("url", { required: "Video URL is required" })}
               className="w-full border border-gray-300 p-2 rounded mt-1 disabled:bg-gray-200"
               placeholder="https://example.com"
               disabled={!!videoPreview} // Disable if video preview is set
             />
+            {errors.url && (
+              <p className="mt-1 text-sm text-red-600 animate-fadeIn">
+                {errors.url.message}
+              </p>
+            )}
           </label>
-          <label className="block">
+          <label className="block flex-1">
             Video Duration:
             <input
-              {...register("video_duration", { required: true })}
+              {...register("video_duration", {
+                required: "Video Duration is required",
+              })}
               className="w-full border border-gray-300 p-2 rounded mt-1  disabled:bg-gray-200"
-              placeholder="https://example.com"
+              placeholder="0:00"
               disabled={!!videoPreview} // Disable if video preview is set
             />
+            {errors.video_duration && (
+              <p className="mt-1 text-sm text-red-600 animate-fadeIn">
+                {errors.video_duration.message}
+              </p>
+            )}
           </label>
         </div>
 
         {logUser && logUser.role === UserRoleEnum.Admin && (
-          <label className="block mb-2">
+          <label className="block mb-2 ">
             Organization:
             <select
-              {...register("organization", { required: true })}
+              {...register("organization", {
+                required:
+                  logUser.role === UserRoleEnum.Admin
+                    ? "Organization is required"
+                    : false,
+              })}
               className="w-full border border-gray-300 p-2 rounded mt-1"
             >
               <option value="">Select a organization</option>
@@ -207,13 +243,18 @@ export default function ReactionForm() {
                 </option>
               ))}
             </select>
+            {errors.organization && (
+              <p className="mt-1 text-sm text-red-600 animate-fadeIn">
+                {errors.organization.message}
+              </p>
+            )}
           </label>
         )}
 
         <label className="block mb-2 mt-4">
           Status:
           <select
-            {...register("status", { required: true })}
+            {...register("status", { required: "Status is required" })}
             className="w-full border border-gray-300 p-2 rounded mt-1"
           >
             <option value="">Select status</option>
@@ -221,12 +262,17 @@ export default function ReactionForm() {
             <option value="10">Approved</option>
             <option value="-10">Rejected</option>
           </select>
+          {errors.status && (
+            <p className="mt-1 text-sm text-red-600 animate-fadeIn">
+              {errors.status.message}
+            </p>
+          )}
         </label>
         <label className="block mb-2 mt-4">
           Due Date:
           <input
             type="datetime-local"
-            {...register("due_date", { required: true })}
+            {...register("due_date")}
             className="w-full border border-gray-300 p-2 rounded mt-1"
             min={new Date().toISOString().slice(0, 16)}
           />

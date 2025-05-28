@@ -1,12 +1,14 @@
 import { addDoc, collection, updateDoc } from "@firebase/firestore";
+import { UserRoleEnum } from "../../enums/UserRoleEnum";
 import { db } from "../../firebase";
+import type { UserResource } from "../../resources/UserResource";
 import addUserOrganization from "../organizations/addUserOrganization";
 
 export async function saveUser({
   logUser,
   data,
 }: {
-  logUser: any;
+  logUser: UserResource;
   data: {
     name: string;
     email: string;
@@ -23,12 +25,18 @@ export async function saveUser({
 
   if (!userOrg) return;
 
+  console.log(
+    "Saving user with data:",
+    logUser,
+    data,
+    logUser.role === UserRoleEnum.OrgAdmin
+  );
   const user = {
     name,
     email,
     created_at: new Date(),
     phone,
-    role,
+    role: logUser.role === UserRoleEnum.OrgAdmin ? UserRoleEnum.User : role,
   };
 
   const ref = collection(db, "users");

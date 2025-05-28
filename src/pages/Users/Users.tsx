@@ -4,28 +4,20 @@ import { listUsers } from "../../services/users/listUsers";
 import { selectSessionUser } from "../../store/reducers/session";
 import { useAppSelector } from "../../store/store";
 
-// type User = {
-//   uuid: string;
-//   email: string | null;
-//   name: string | null;
-//   role: number;
-//   disabled: boolean;
-// };
-
 export default function Users() {
   const loggedUser = useAppSelector(selectSessionUser);
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const fetchUsers = async () => {
+    setLoading(true);
+    const usersData = await listUsers(loggedUser);
+    console.log("Fetched users:", usersData);
+    setUsers(() => usersData);
+    setLoading(false);
+  };
 
   useEffect(() => {
-    async function fetchUsers() {
-      setLoading(true);
-      const usersData = await listUsers(loggedUser);
-      setUsers(usersData);
-      setLoading(false);
-    }
-
     fetchUsers();
   }, []);
 

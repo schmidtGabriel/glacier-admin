@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CompleteOrganizationForm } from "../components/forms/CompleteOrganizationForm";
 import SignupForm from "../components/forms/SignupForm";
+import { Loading } from "../components/ui/Loading";
 import { signup } from "../services/auth/AuthService";
 import { setSessionUser } from "../store/reducers/session";
 import { useAppDispatch } from "../store/store";
@@ -77,7 +78,8 @@ const Signup: React.FC = () => {
       {loading ? (
         <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="p-3 bg-blue-50 border border-blue-200 text-blue-700 rounded-lg text-sm animate-fadeIn">
-            Processing your request...
+            <Loading />
+            Loading...
           </div>
         </div>
       ) : (
