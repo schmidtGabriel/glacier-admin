@@ -11,7 +11,11 @@ export async function listReactions(user: any): Promise<ReactionResource[]> {
   let _query = query(q);
 
   if (org && user?.role === UserRoleEnum.OrgAdmin) {
-    _query = query(q, where("organization", "==", org.uuid));
+    const qUserOrg = collection(db, "user_organizations");
+    const _queryOrgs = query(qUserOrg, where("organization", "==", org.uuid));
+    const querySnapshot = await getDocs(_queryOrgs);
+    const userIds = querySnapshot.docs.map((doc) => doc.data().user);
+    _query = query(q, where("user", "in", userIds));
   }
   const querySnapshot = await getDocs(_query);
 
