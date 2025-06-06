@@ -1,8 +1,9 @@
 import { collection, getDocs, query, where } from "@firebase/firestore";
 import { db } from "../../firebase";
+import type { UserResource } from "../../resources/UserResource";
 import getOrganization from "../organizations/getOrganization";
 
- async function getUser(ref: string) {
+async function getUser(ref: string): Promise<UserResource | null> {
   const c = collection(db, "users");
   const querySnapshot = await getDocs(query(c, where("uuid", "==", ref)));
   const data = querySnapshot.docs[0]?.data();
@@ -17,7 +18,7 @@ import getOrganization from "../organizations/getOrganization";
     role: data.role,
     fcm_token: data.fcm_token,
     created_at: data.created_at.toDate().toISOString(),
-    organization: await getOrganization (data.uuid),
+    organization: await getOrganization(data.uuid),
   };
 }
 

@@ -82,22 +82,22 @@ export default function Reactions() {
             >
               <td className="p-4">{item.title || "—"}</td>
               <td className="p-4">{item.url || "—"}</td>
-              <td className="p-4">{item.user.name}</td>
+              <td className="p-4">{item.user?.name || "-"}</td>
               <td className="p-4">
                 {item.status in ReactionStatusEnum
                   ? ReactionStatusLabel[
                       item.status as keyof typeof ReactionStatusLabel
                     ]
-                  : "Unknown"}
+                  : "-"}
               </td>
               <td className="p-4">
                 {item.type_video in VideoTypeLabel
                   ? VideoTypeLabel[
                       item.type_video as keyof typeof VideoTypeLabel
                     ]
-                  : "Unknown"}
+                  : "-"}
               </td>
-              <td className="p-4">{item.due_date}</td>
+              <td className="p-4">{item.due_date ?? "-"}</td>
               <td className="p-4">{item.created_at}</td>
               <td className="p-4 flex flex-row gap-2">
                 <button

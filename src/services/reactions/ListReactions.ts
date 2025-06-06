@@ -22,21 +22,23 @@ export async function listReactions(user: any): Promise<ReactionResource[]> {
   const reactions = await Promise.all(
     querySnapshot.docs.map(async (doc) => {
       const data = doc.data();
-
-      const user = await getUser(data.user);
+      let userReaction = null;
+      if (data?.user) {
+        userReaction = await getUser(data?.user);
+      }
 
       return {
         ...data,
         uuid: doc.id,
         created_at: data.created_at.toDate().toISOString(),
-        due_date: data.due_date.toDate().toISOString(),
+        due_date: data.due_date?.toDate().toISOString() ?? null,
         title: data.title,
         description: data.description,
         type_video: data.type_video,
         video_duration: data.video_duration,
         status: data.status,
         url: data.url,
-        user,
+        user: userReaction,
       } as unknown as ReactionResource;
     })
   );
