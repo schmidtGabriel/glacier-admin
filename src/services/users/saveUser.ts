@@ -25,18 +25,13 @@ export async function saveUser({
 
   if (!userOrg) return;
 
-  console.log(
-    "Saving user with data:",
-    logUser,
-    data,
-    logUser.role === UserRoleEnum.OrgAdmin
-  );
   const user = {
     name,
     email,
     created_at: new Date(),
     phone,
     role: logUser.role === UserRoleEnum.OrgAdmin ? UserRoleEnum.User : role,
+    hasAccount: false,
   };
 
   const ref = collection(db, "users");

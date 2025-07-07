@@ -54,11 +54,14 @@ export default function ReactionForm() {
             user: reaction.user?.uuid || reaction.user?.toString() || "",
             title: reaction.title,
             url: reaction.url,
-            status: reaction.status,
-            type_video: reaction.type_video,
-            due_date: reaction.due_date?.toDate
-              ? reaction.due_date.toDate().toISOString().slice(0, 16)
-              : new Date().toISOString().slice(0, 16),
+            status: reaction.status.toString(),
+            type_video: reaction.type_video.toString(),
+            due_date:
+              reaction.due_date &&
+              typeof reaction.due_date === "object" &&
+              "toDate" in reaction.due_date
+                ? (reaction.due_date as any).toDate().toISOString().slice(0, 16)
+                : reaction.due_date || new Date().toISOString().slice(0, 16),
             video_duration: reaction.video_duration,
           });
         } else {

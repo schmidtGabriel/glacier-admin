@@ -1,7 +1,7 @@
 {
   "name": "glacier",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -15,6 +15,7 @@
     "@google-cloud/storage": "6.9.4",
     "@reduxjs/toolkit": "^2.6.1",
     "@tailwindcss/vite": "^4.1.5",
+    "axios": "^1.9.0",
     "classnames": "^2.5.1",
     "firebase": "^11.7.0",
     "firebase-admin": "^13.4.0",
@@ -29,6 +30,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
+    "@types/axios": "^0.9.36",
+    "@types/node": "^24.0.0",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",

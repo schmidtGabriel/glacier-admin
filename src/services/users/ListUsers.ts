@@ -18,6 +18,7 @@ export async function listUsers(user?: UserResource): Promise<UserResource[]> {
         email: doc.data().email,
         name: doc.data().name,
         role: doc.data().role,
+        phone: doc.data().phone || null,
       }));
     } else {
       if (!org) return [];
@@ -34,6 +35,7 @@ export async function listUsers(user?: UserResource): Promise<UserResource[]> {
         email: doc.data().email,
         name: doc.data().name,
         role: doc.data().role,
+        phone: doc.data().phone || null,
       }));
     }
   } else {
@@ -45,6 +47,7 @@ export async function listUsers(user?: UserResource): Promise<UserResource[]> {
       email: doc.data().email,
       name: doc.data().name,
       role: doc.data().role,
+      phone: doc.data().phone || null,
     }));
   }
 }

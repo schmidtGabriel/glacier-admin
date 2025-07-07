@@ -65,6 +65,7 @@ export const signup = async (data: {
       phone: data.phone,
       created_at: new Date(),
       role: 20,
+      hasAccount: true,
     };
     return createUserWithEmailAndPassword(getAuth(), data.email, data.password)
       .then(async (userCredential) => {

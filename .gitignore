@@ -28,4 +28,4 @@ dist-ssr
 .env
 
 
-testtruereaction-firebase-adminsdk-fbsvc-e7ec24129a.json
+.firebase/*
