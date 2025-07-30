@@ -1,5 +1,4 @@
 import { addDoc, collection, updateDoc } from "@firebase/firestore";
-import { UserRoleEnum } from "../../enums/UserRoleEnum";
 import { db } from "../../firebase";
 import type { UserResource } from "../../resources/UserResource";
 import addUserOrganization from "../organizations/addUserOrganization";
@@ -14,7 +13,7 @@ export async function saveUser({
     email: string;
     phone: string;
     password: string;
-    role: number;
+    role: string;
     organization?: string;
   };
 }): Promise<void> {
@@ -30,7 +29,7 @@ export async function saveUser({
     email,
     created_at: new Date(),
     phone,
-    role: logUser.role === UserRoleEnum.OrgAdmin ? UserRoleEnum.User : role,
+    role: parseInt(role) || 10, // Default to User role if not specified
     hasAccount: false,
   };
 

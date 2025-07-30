@@ -42,14 +42,15 @@ export async function saveReaction({
   const reaction = {
     user,
     title,
-    url,
+    video: url,
     type_video,
-    due_date: new Date(due_date),
+    due_date: due_date ? new Date(due_date) : null,
     status,
     created_at: new Date(),
     recorded_video: "",
     video_duration,
     organization: userOrg ? userOrg : null,
+    requested: logUser?.uuid,
   };
 
   const reactionRef = collection(db, "reactions");

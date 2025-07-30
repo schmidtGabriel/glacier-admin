@@ -1,16 +1,14 @@
 import { doc, updateDoc } from "@firebase/firestore";
 import { db } from "../../firebase";
 
-export async function updateUser(
-  data: {
-    name: string;
-    email: string;
-    phone: string;
-    password: string;
-    uuid: string;
-    role: number;
-  },
-): Promise<void> {
+export async function updateUser(data: {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  uuid: string;
+  role: string;
+}): Promise<void> {
   const { name, email, phone, role } = data;
 
   const payload: {
@@ -22,7 +20,7 @@ export async function updateUser(
     name,
     email,
     phone,
-    role
+    role: parseInt(role, 10),
   };
 
   const reactionRef = doc(db, "users", data.uuid);

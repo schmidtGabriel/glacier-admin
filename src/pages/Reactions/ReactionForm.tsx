@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import UploadVideo from "../../components/UploadFile";
-import { UserRoleEnum } from "../../enums/UserRoleEnum";
 import { VideoTypeEnum, VideoTypeLabel } from "../../enums/VideoTypeEnum";
 import enumToArray from "../../helpers/EnumsToArray";
 import { listOrganizations } from "../../services/organizations/listOrganizations";
@@ -32,7 +31,14 @@ export default function ReactionForm() {
     setValue,
     watch,
     formState: { errors },
-  } = useForm<ReactionFormData>();
+  } = useForm<ReactionFormData>({
+    defaultValues: {
+      user: "",
+      title: "",
+      url: "",
+      status: "0",
+    },
+  });
   const logUser = useAppSelector(selectSessionUser);
   const navigate = useNavigate();
   const location = useLocation();
@@ -226,7 +232,7 @@ export default function ReactionForm() {
           </label>
         </div>
 
-        {logUser && logUser.role === UserRoleEnum.Admin && (
+        {/* {logUser && logUser.role === UserRoleEnum.Admin && (
           <label className="block mb-2 ">
             Organization:
             <select
@@ -251,7 +257,7 @@ export default function ReactionForm() {
               </p>
             )}
           </label>
-        )}
+        )} */}
 
         <label className="block mb-2 mt-4">
           Status:

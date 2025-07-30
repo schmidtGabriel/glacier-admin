@@ -12,7 +12,7 @@ const Login: React.FC = () => {
           </div>
         </div>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Sign in to your account
+          Sign in
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
           Access your dashboard and manage your profile
@@ -26,7 +26,7 @@ const Login: React.FC = () => {
       </div>
 
       <footer className="mt-8 text-center text-sm text-gray-500">
-        <p>© {new Date().getFullYear()} Your Company. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} Glacier. All rights reserved.</p>
         <div className="mt-2 space-x-4">
           <a
             href="#"

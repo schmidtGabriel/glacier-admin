@@ -28,6 +28,8 @@ export const login = async (email: string, password: string) => {
     );
 
     const user = await getUser(userCredential.user.uid);
+    console.log("User data:", user?.["role"] === UserRoleEnum.Admin);
+
     if (
       !user ||
       (user["role"] !== UserRoleEnum.Admin &&

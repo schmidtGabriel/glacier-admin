@@ -6,6 +6,7 @@ import enumToArray from "../../helpers/EnumsToArray";
 import { listOrganizations } from "../../services/organizations/listOrganizations";
 import getUser from "../../services/users/getUser";
 import { saveUser } from "../../services/users/saveUser";
+import { sendInviteFriend } from "../../services/users/sendInviteFriend";
 import { updateUser } from "../../services/users/updateUser";
 import { selectSessionUser } from "../../store/reducers/session";
 import { useAppSelector } from "../../store/store";
@@ -15,7 +16,7 @@ type UserFormData = {
   email: string;
   phone: string;
   password: string;
-  role: number;
+  role: string;
   organization?: string;
 };
 
@@ -33,8 +34,9 @@ export default function UserForm() {
   const uuid = searchParams.get("uuid");
   const [loading, setLoading] = useState(false);
   const [organizations, setOrganizations] = useState<any[]>([]);
+  const [user, setUser] = useState<any>({});
 
-  const fetchReaction = async (uuid?: string) => {
+  const featchUser = async (uuid?: string) => {
     if (!uuid) return;
 
     setLoading(true);
@@ -48,6 +50,7 @@ export default function UserForm() {
             phone: item.phone,
             role: item.role,
           });
+          setUser(item);
         } else {
           console.error("User not found");
         }
@@ -69,7 +72,7 @@ export default function UserForm() {
   };
 
   useEffect(() => {
-    Promise.all([getOrganizations(), fetchReaction(uuid ?? undefined)]);
+    Promise.all([getOrganizations(), featchUser(uuid ?? undefined)]);
   }, [uuid]);
 
   const onSubmit = async (data: UserFormData) => {
@@ -81,6 +84,13 @@ export default function UserForm() {
     // TODO: send data to Firebase
     navigate("/users");
   };
+
+  const inviteFriend = async () => {
+    if (!uuid) return;
+
+    await sendInviteFriend({ userId: logUser.uuid, user: user });
+  };
+
   if (loading) return <p className="p-4">Loading...</p>;
 
   return (
@@ -175,7 +185,7 @@ export default function UserForm() {
           </label>
         )}
 
-        {logUser && logUser.role === UserRoleEnum.Admin && (
+        {/* {logUser && logUser.role === UserRoleEnum.Admin && (
           <label className="block mb-2">
             Organization:
             <select
@@ -200,14 +210,26 @@ export default function UserForm() {
               </p>
             )}
           </label>
-        )}
+        )} */}
 
-        <button
-          type="submit"
-          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-        >
-          Submit
-        </button>
+        <div className="flex flex-row justify-end items-center gap-4">
+          {uuid && (
+            <button
+              type="button"
+              onClick={() => inviteFriend()}
+              className="mt-4 px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700"
+            >
+              Invite friend
+            </button>
+          )}
+
+          <button
+            type="submit"
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Submit
+          </button>
+        </div>
       </form>
     </div>
   );
