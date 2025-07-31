@@ -4,7 +4,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import UploadVideo from "../../components/UploadFile";
 import { VideoTypeEnum, VideoTypeLabel } from "../../enums/VideoTypeEnum";
 import enumToArray from "../../helpers/EnumsToArray";
-import { listOrganizations } from "../../services/organizations/listOrganizations";
 import getReaction from "../../services/reactions/getReaction";
 import { saveReaction } from "../../services/reactions/saveReaction";
 import { updateReaction } from "../../services/reactions/updateReaction";
@@ -46,7 +45,7 @@ export default function ReactionForm() {
   const uuid = searchParams.get("uuid");
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState<any[]>([]);
-  const [organizations, setOrganizations] = useState<any[]>([]);
+  // const [organizations, setOrganizations] = useState<any[]>([]);
   const [videoPreview, setVideoPreview] = useState<string | null>(null);
 
   const fetchReaction = async (uuid?: string) => {
@@ -82,13 +81,13 @@ export default function ReactionForm() {
       });
   };
 
-  const getOrganizations = async () => {
-    const res = await listOrganizations();
+  // const getOrganizations = async () => {
+  //   const res = await listOrganizations();
 
-    if (res) {
-      setOrganizations(res);
-    }
-  };
+  //   if (res) {
+  //     setOrganizations(res);
+  //   }
+  // };
 
   const getUsers = async () => {
     const res = await listUsers(logUser);
@@ -111,7 +110,7 @@ export default function ReactionForm() {
   useEffect(() => {
     Promise.all([
       getUsers(),
-      getOrganizations(),
+      // getOrganizations(),
       fetchReaction(uuid ?? undefined),
     ]);
   }, [uuid]);

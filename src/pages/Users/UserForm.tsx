@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import { UserRoleEnum } from "../../enums/UserRoleEnum";
 import enumToArray from "../../helpers/EnumsToArray";
-import { listOrganizations } from "../../services/organizations/listOrganizations";
 import getUser from "../../services/users/getUser";
 import { saveUser } from "../../services/users/saveUser";
 import { sendInviteFriend } from "../../services/users/sendInviteFriend";
@@ -33,7 +32,7 @@ export default function UserForm() {
   const searchParams = new URLSearchParams(location.search);
   const uuid = searchParams.get("uuid");
   const [loading, setLoading] = useState(false);
-  const [organizations, setOrganizations] = useState<any[]>([]);
+  // const [organizations, setOrganizations] = useState<any[]>([]);
   const [user, setUser] = useState<any>({});
 
   const featchUser = async (uuid?: string) => {
@@ -63,16 +62,16 @@ export default function UserForm() {
       });
   };
 
-  const getOrganizations = async () => {
-    const res = await listOrganizations();
+  // const getOrganizations = async () => {
+  //   const res = await listOrganizations();
 
-    if (res) {
-      setOrganizations(res);
-    }
-  };
+  //   if (res) {
+  //     setOrganizations(res);
+  //   }
+  // };
 
   useEffect(() => {
-    Promise.all([getOrganizations(), featchUser(uuid ?? undefined)]);
+    Promise.all([featchUser(uuid ?? undefined)]);
   }, [uuid]);
 
   const onSubmit = async (data: UserFormData) => {
