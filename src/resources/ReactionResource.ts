@@ -12,10 +12,11 @@ export type ReactionResource = {
   due_date: string;
   video_duration: number;
   video_recorded: boolean;
-  url: string;
-  selfie_video: boolean;
-  selfie_url: string;
-  recorded_url: string;
+  video_path: string;
   video_url: string;
+  reaction_path: string;
+  reaction_url: string;
+  recorded_path: string;
+  recorded_url: string;
   created_at: string;
 };

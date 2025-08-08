@@ -21,21 +21,22 @@ async function getReaction(ref: string): Promise<ReactionResource | null> {
     user: user,
     created_at: data.created_at?.toDate().toISOString(),
     due_date: data.due_date?.toDate().toISOString(),
-    url: data.url,
     video_recorded: data.recorded_video,
     type_video: data.type_video,
     status: data.status,
-    recorded_url: await getRecordedVideoUrl(data.recorded_video),
-    video_url: await getVideoUrl(data.url),
+    video_url: await getVideoUrl(data.video_path),
+    video_path: data.video_path,
+    recorded_url: await getRecordedVideoUrl(data.recorded_path),
+    recorded_path: data.recorded_path,
+    reaction_url: await getReactionUrl(data.reaction_path),
+    reaction_path: data.reaction_path,
     video_duration: data.video_duration,
-    selfie_video: data.selfie_video,
-    selfie_url: await getRecordedVideoUrl(data.selfie_video),
   };
 }
 
-async function getRecordedVideoUrl(videoUrl: string): Promise<string> {
-  if (!videoUrl) return "";
-  const fileRef = ref(storage, videoUrl);
+async function getRecordedVideoUrl(path: string): Promise<string> {
+  if (!path) return "";
+  const fileRef = ref(storage, path);
   try {
     const url = await getDownloadURL(fileRef);
     return url;
@@ -45,15 +46,27 @@ async function getRecordedVideoUrl(videoUrl: string): Promise<string> {
   }
 }
 
-async function getVideoUrl(videoUrl: string) {
-  if (videoUrl.includes("videos/")) {
-    const fileRef = ref(storage, videoUrl);
+async function getReactionUrl(path: string): Promise<string> {
+  if (!path) return "";
+  const fileRef = ref(storage, path);
+  try {
+    const url = await getDownloadURL(fileRef);
+    return url;
+  } catch (error) {
+    console.error("Error getting video URL:", error);
+    return "";
+  }
+}
+
+async function getVideoUrl(path: string) {
+  if (path.includes("videos/")) {
+    const fileRef = ref(storage, path);
 
     const url = await getDownloadURL(fileRef);
 
     return url;
   } else {
-    return videoUrl;
+    return path;
   }
 }
 

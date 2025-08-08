@@ -58,7 +58,7 @@ export default function ReactionForm() {
           reset({
             user: reaction.user?.uuid || reaction.user?.toString() || "",
             title: reaction.title,
-            url: reaction.url,
+            url: reaction.video_url,
             status: reaction.status.toString(),
             type_video: reaction.type_video.toString(),
             due_date:
@@ -286,7 +286,7 @@ export default function ReactionForm() {
         </label>
         <button
           type="submit"
-          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer"
         >
           Submit
         </button>

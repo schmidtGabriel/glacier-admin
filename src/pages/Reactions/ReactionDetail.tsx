@@ -66,7 +66,7 @@ export default function ReactionDetail() {
       </div>
 
       <div className="flex flex-col max-w-2xl mx-auto mb-4">
-        {(reaction.video_url || reaction.recorded_url) && (
+        {reaction.video_url && (
           <div className="mt-6">
             <strong className="block mb-2">Video Previews:</strong>
             <div className="flex flex-row gap-4">
@@ -117,10 +117,10 @@ export default function ReactionDetail() {
                 </div>
               )}
 
-              {reaction.selfie_url && (
+              {reaction.reaction_url && (
                 <div className="flex-1">
                   <video
-                    src={String(reaction.selfie_url)}
+                    src={String(reaction.reaction_url)}
                     controls
                     className="max-w-[100%] max-h-[500px] rounded"
                     onError={(e) => {
@@ -130,7 +130,7 @@ export default function ReactionDetail() {
                     }}
                   />
                   <a
-                    href={String(reaction.selfie_url)}
+                    href={String(reaction.reaction_url)}
                     download
                     className="mt-2 bg-blue-600 hover:bg-blue-800 text-white flex flex-row gap-2 items-center w-fit px-2 py-1 rounded"
                     aria-label="Download Video"

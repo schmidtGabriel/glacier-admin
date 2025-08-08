@@ -1,4 +1,10 @@
-import { collection, getDocs, query, where } from "@firebase/firestore";
+import {
+  collection,
+  getDocs,
+  orderBy,
+  query,
+  where,
+} from "@firebase/firestore";
 import { UserRoleEnum } from "../../enums/UserRoleEnum";
 import { db } from "../../firebase";
 import type { ReactionResource } from "../../resources/ReactionResource";
@@ -8,11 +14,15 @@ export async function listReactions(user: any): Promise<ReactionResource[]> {
   const q = collection(db, "reactions");
   const org = user?.organization;
 
-  let _query = query(q);
+  let _query = query(q, orderBy("created_at", "desc"));
 
   if (org && user?.role === UserRoleEnum.OrgAdmin) {
     const qUserOrg = collection(db, "user_organizations");
-    const _queryOrgs = query(qUserOrg, where("organization", "==", org.uuid));
+    const _queryOrgs = query(
+      qUserOrg,
+      where("organization", "==", org.uuid),
+      orderBy("created_at", "desc")
+    );
     const querySnapshot = await getDocs(_queryOrgs);
     const userIds = querySnapshot.docs.map((doc) => doc.data().user);
     _query = query(q, where("user", "in", userIds));

@@ -13,6 +13,7 @@ import {
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
+import logoImage from "../../assets/icon.png";
 import type { UserResource } from "../../resources/UserResource";
 import { clearSession, selectSessionUser } from "../../store/reducers/session";
 import { useAppSelector } from "../../store/store";
@@ -60,16 +61,20 @@ export default function SidebarLayout({
         className={classNames(
           "fixed z-30 inset-y-0 left-0 bg-white dark:bg-gray-800 border-r border-slate-200 dark:border-gray-700 shadow-sm transition-all duration-200 ease-in-out",
           "md:static md:translate-x-0",
-          collapsed ? "w-20" : "w-64",
+          collapsed ? "w-24" : "w-64",
           sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         )}
       >
         {/* Logo + Collapse */}
         <div className="flex items-center justify-between h-16 px-4 border-b border-slate-200 dark:border-gray-700">
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-blue-500 rounded-md" />
+            <img
+              src={logoImage}
+              alt="Glacier Logo"
+              className={classNames("h-8 w-8")}
+            />
             {!collapsed && (
-              <span className="font-bold text-lg">True Reaction</span>
+              <span className="font-bold text-lg">Try Glacer</span>
             )}
           </div>
           <div className="md:flex hidden">

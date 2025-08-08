@@ -216,7 +216,7 @@ export default function UserForm() {
             <button
               type="button"
               onClick={() => inviteFriend()}
-              className="mt-4 px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700"
+              className="mt-4 px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 cursor-pointer"
             >
               Invite friend
             </button>
@@ -224,7 +224,7 @@ export default function UserForm() {
 
           <button
             type="submit"
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer"
           >
             Submit
           </button>

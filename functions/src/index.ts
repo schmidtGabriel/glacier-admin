@@ -215,22 +215,29 @@ export const onFriendInvitationCreated = onDocumentCreated(
 const bucket = admin.storage().bucket();
 const execFileAsync = promisify(execFile);
 
-export const runFFmpeg = onCall(
+export const runCompleteRecord = onCall(
   {
     memory: "1GiB",
     timeoutSeconds: 120,
   },
-  async (request: { data: { video1Url: any; video2Url: any } }) => {
-    const { video1Url, video2Url } = request.data;
+  async (request: {
+    data: {
+      videoPath: string;
+      reactionPath: string;
+      uuid: string;
+      delayTime: number;
+    };
+  }) => {
+    const { videoPath, reactionPath, uuid, delayTime } = request.data;
 
-    if (!video1Url || !video2Url) {
+    if (!videoPath || !reactionPath) {
       throw new HttpsError("invalid-argument", "Missing video URLs.");
     }
 
     const tempDir = os.tmpdir();
-    const video1Path = path.join(tempDir, "video1.mp4");
-    const video2Path = path.join(tempDir, "video2.mp4");
-    const outputPath = path.join(tempDir, `output-${Date.now()}.mp4`);
+    const sourcePath = path.join(tempDir, "source.mp4");
+    const sourceReactionPath = path.join(tempDir, "reaction.mp4");
+    const outputPath = path.join(tempDir, `${uuid}.mp4`);
 
     const downloadFile = async (url: string, dest: string) => {
       const writer = fs.createWriteStream(dest);
@@ -246,47 +253,111 @@ export const runFFmpeg = onCall(
       });
     };
 
+    // Function to get video dimensions using ffprobe
+    const getVideoDimensions = async (videoPath: string) => {
+      const ffprobePath = path.join(__dirname, "ffmpeg", "ffprobe");
+      const ffprobeArgs = [
+        "-v",
+        "quiet",
+        "-print_format",
+        "json",
+        "-show_streams",
+        "-select_streams",
+        "v:0",
+        videoPath,
+      ];
+
+      const result = await execFileAsync(ffprobePath, ffprobeArgs);
+      const videoInfo = JSON.parse(result.stdout);
+      const videoStream = videoInfo.streams[0];
+
+      return {
+        width: parseInt(videoStream.width),
+        height: parseInt(videoStream.height),
+        isLandscape: parseInt(videoStream.width) > parseInt(videoStream.height),
+      };
+    };
+
     try {
-      await downloadFile(video1Url, video1Path);
-      await downloadFile(video2Url, video2Path);
+      await downloadFile(videoPath, sourcePath);
+      await downloadFile(reactionPath, sourceReactionPath);
 
       const ffmpegPath = path.join(__dirname, "ffmpeg", "ffmpeg");
 
-      const ffmpegArgs = [
-        "-i",
-        video1Path,
-        "-i",
-        video2Path,
-        "-filter_complex",
-        "[0:v]scale=1080:720:flags=bilinear[top];" +
-          "[1:v]scale=1080:720:flags=bilinear[bottom];" +
-          "color=black:size=1080x20:duration=0.1[gap];" +
-          "[top][gap][bottom]vstack=inputs=3:shortest=0[outv];" +
-          "[0:a][1:a]amix=inputs=2:duration=shortest[outa]",
-        "-map",
-        "[outv]",
-        "-map",
-        "[outa]",
-        "-c:v",
-        "libx264",
-        "-preset",
-        "fast",
-        "-tune",
-        "zerolatency",
-        "-crf",
-        "18",
-        "-pix_fmt",
-        "yuv420p",
-        "-threads",
-        "0",
-        "-f",
-        "mp4",
-        outputPath,
-      ];
+      // Determine if source video is in landscape or portrait mode
+      const { isLandscape } = await getVideoDimensions(sourcePath);
+
+      const waterMark =
+        "Glacier - true reaction | " +
+        new Date().toLocaleString("en-US", {
+          month: "short",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        });
+
+      const ffmpegArgs = isLandscape
+        ? [
+            "-i",
+            sourcePath,
+            "-i",
+            sourceReactionPath,
+            "-filter_complex",
+            `[0:v]tpad=start_mode=clone:start_duration=${delayTime},scale=1080:720[vid1_scaled];` +
+              `[1:v]setpts=PTS-STARTPTS,scale=1080:1200[vid2_scaled];` +
+              `[vid1_scaled][vid2_scaled]vstack=inputs=2[stacked];` +
+              `[stacked]drawbox=y=680:h=80:color=white@0.8:t=fill,` +
+              `drawtext=text=${waterMark}:fontcolor=blue:fontsize=36:x=(w-text_w)/2:y=700[outv];` +
+              `[0:a]adelay=${delayTime * 1000}|${delayTime * 1000}[a0];` +
+              `[1:a]anull[a1];` +
+              `[a0][a1]amix=inputs=2:duration=longest:dropout_transition=3[audio]`,
+            "-map",
+            "[outv]",
+            "-map",
+            "[audio]",
+            "-c:v",
+            "libx264",
+            "-c:a",
+            "aac",
+            "-preset",
+            "fast",
+            "-crf",
+            "23",
+            outputPath,
+          ]
+        : [
+            "-i",
+            sourcePath,
+            "-i",
+            sourceReactionPath,
+            "-filter_complex",
+            `[0:v]tpad=start_mode=clone:start_duration=${delayTime},scale=w=1080:h=-1,crop=1080:960:(in_w-1080)/2:(in_h-960)/2[vid1_scaled];` +
+              `[1:v]setpts=PTS-STARTPTS,scale=w=1080:h=-1,crop=1080:960:(in_w-1080)/2:(in_h-960)/2[vid2_scaled];` +
+              `[vid1_scaled][vid2_scaled]vstack=inputs=2[stacked];` +
+              `[stacked]drawbox=y=ih/2-40:h=80:color=white@0.8:t=fill,` +
+              `drawtext=text=${waterMark}:fontcolor=blue:fontsize=36:x=(w-text_w)/2:y=(h-text_h)/2[outv];` +
+              `[0:a]adelay=${delayTime * 1000}|${delayTime * 1000}[a0];` +
+              `[1:a]anull[a1];` +
+              `[a0][a1]amix=inputs=2:duration=longest:dropout_transition=3[audio]`,
+            "-map",
+            "[outv]",
+            "-map",
+            "[audio]",
+            "-c:v",
+            "libx264",
+            "-c:a",
+            "aac",
+            "-preset",
+            "fast",
+            "-crf",
+            "23",
+            outputPath,
+          ];
 
       await execFileAsync(ffmpegPath, ffmpegArgs);
 
-      const destPath = `processed/output-${Date.now()}.mp4`;
+      const destPath = `records/${uuid}.mp4`;
       const [file] = await bucket.upload(outputPath, {
         destination: destPath,
         metadata: { contentType: "video/mp4" },
@@ -298,11 +369,11 @@ export const runFFmpeg = onCall(
       });
 
       // Clean up temp files
-      fs.unlinkSync(video1Path);
-      fs.unlinkSync(video2Path);
+      fs.unlinkSync(sourcePath);
+      fs.unlinkSync(sourceReactionPath);
       fs.unlinkSync(outputPath);
 
-      return { videoUrl: signedUrl };
+      return { recordPath: `records/${uuid}.mp4`, recordUrl: signedUrl };
     } catch (error: any) {
       console.error("FFmpeg processing error:", error);
       throw new HttpsError(
